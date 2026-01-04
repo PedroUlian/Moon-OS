@@ -1,2 +1,9 @@
 {
+  "username": "Pedro",
+  "passwd": "1122",
+  "acess": "Basic",
+  "ctask": "energize the spacecraft",
+  "completed-tasks": 0,
+  "LunaOnline": false,
+  "cwd": "/"
 }
