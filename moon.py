@@ -1,11 +1,36 @@
-import msvcrt
 import time
 import sys
 import os
 import json
 import subprocess
 
-os.system('cls')
+WINDOWS = os.name == "nt"
+
+if WINDOWS:
+    import msvcrt
+
+    def getch():
+        return msvcrt.getch()
+
+else:
+    import tty
+    import termios
+
+    def getch():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            ch = sys.stdin.read(1)
+            return ch.encode()
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+def clear():
+    os.system("cls" if WINDOWS else "clear")
+
+
+clear()
 
 FS_ROOT = "moon_fs"
 STATE_FILE = "state.json"
@@ -228,7 +253,7 @@ def read_command(prompt="> "):
     cmd = ""
 
     while True:
-        key = msvcrt.getch()
+        key = getch()
 
         if key == b'\r':  # ENTER
             print()
@@ -249,7 +274,7 @@ def read_password(prompt="Password: "):
     passwd = ""
 
     while True:
-        key = msvcrt.getch()
+        key = getch()
 
         if key == b'\r':  # ENTER
             print()
@@ -282,16 +307,16 @@ def task1():
     if taskquestion == "Y" or taskquestion == "y":
         state["ctask"] = "energize the spacecraft"
         save_state(state)
-        os.system('cls')
+        clear()
         time.sleep(0.5)
         type_out("Very Well!")
         time.sleep(0.5)
         type_out("Your first task is to turn on the power to the spaceship.")
         time.sleep(5)
-        os.system('cls')
+        clear()
         type_out("let's go!")
         time.sleep(3)
-        os.system('cls')
+        clear()
     elif taskquestion == "N" or taskquestion == "n":
         time.sleep(0.5)
         type_out("Ok, See you next time!")
@@ -337,7 +362,7 @@ def main():
         print("\033[1A\033[2K", end="")
         passwd = read_password("Password: ")
         if passwd != state["passwd"]:
-            os.system("cls")
+            clear()
             type_out("Authenticating user", 0.03)
             for _ in range(3):
                 print(".", end="", flush=True)
@@ -345,7 +370,7 @@ def main():
             print("\033[2K\r", end="")
             type_out("ACCESS DENIED!")
             time.sleep(1)
-            os.system("cls")
+            clear()
             login()
 
     #######################
@@ -361,7 +386,7 @@ def main():
     else:
         login()
 
-    os.system('cls')
+    clear()
     type_out("Authenticating user", 0.03)
     for _ in range(3):
         print(".", end="", flush=True)
@@ -371,7 +396,7 @@ def main():
     time.sleep(1)
     state["LunaOnline"] = True
     save_state(state)
-    os.system('cls')
+    clear()
     type_out("Moon OS v0.9")
     type_out(f"{state["username"]}@station:~$ ")
     print("\033[1A\033[2K", end="")

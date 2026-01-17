@@ -2,6 +2,8 @@ import tkinter as tk
 import json
 import os
 
+WINDOWS = os.name == "nt"
+
 STATE_FILE = "state.json"
 UPDATE_INTERVAL = 1000  # ms
 
@@ -14,8 +16,16 @@ class LunaWindow(tk.Tk):
 
         self.overrideredirect(True)
         self.attributes("-topmost", True)
-        self.configure(bg="#0C0C0C")  # fundo que será transparente
-        self.attributes("-transparentcolor", "#0C0C0C")
+
+        if WINDOWS:
+        # Windows: transparência por cor
+            self.configure(bg="#0C0C0C")
+            self.attributes("-transparentcolor", "#0C0C0C")
+        else:
+        # Linux: transparência por alpha
+            self.configure(bg="#111722")  # fundo visível
+            self.attributes("-alpha", 0.95)  # leve transparência
+
 
 
         width = 320
